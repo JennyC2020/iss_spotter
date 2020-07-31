@@ -1,13 +1,16 @@
 
 const request = require('request');
 
+// iss.js
 /**
- * Makes a single API request to retrieve the user's IP address.
+ * Makes a single API request to retrieve the lat/lng for a given IPv4 address.
  * Input:
- *   - A callback (to pass back an error or the IP string)
+ *   - The ip (ipv4) address (string)
+ *   - A callback (to pass back an error or the lat/lng object)
  * Returns (via Callback):
  *   - An error, if any (nullable)
- *   - The IP address as a string (null if error). Example: "162.245.144.188"
+ *   - The lat and lng as an object (null if error). Example:
+ *     { latitude: '49.27670', longitude: '-123.13000' }
  */
 
 const fetchMyIP = (callback) => {
@@ -28,4 +31,26 @@ const fetchMyIP = (callback) => {
   });
 };
 
-module.exports = { fetchMyIP };
+
+
+
+const fetchCoordsByIP = (ip, callback) => {
+  request(`https://ipvigilante.com/${ip}`, (error, resp, body) => {
+    if (error) {
+      callback(error, null);
+      return;
+    }
+
+    if (resp.statusCode !== 200) {
+      callback(Error(`Status Code ${resp.statusCode} when fetching coordinates for IP. Response: ${body}`), null);
+      return;
+    }
+
+    const { latitude, longitude } = JSON.parse(body).data;
+
+    callback(null, { latitude, longitude });
+
+  });
+};
+
+module.exports = { fetchMyIP, fetchCoordsByIP };
