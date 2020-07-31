@@ -90,7 +90,7 @@ const nextISSTimesForMyLocation = (callback) => {
       if (error) {
         return callback(error, null);
       }
-      fetchISSFlyOverTimes(coords, (error, flyTimes) => {
+      (coords, (error, flyTimes) => {
         if (error) {
           return callback(error, null);
         }
